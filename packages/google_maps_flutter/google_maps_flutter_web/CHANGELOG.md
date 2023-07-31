@@ -1,5 +1,6 @@
 ## 0.5.2
 
+* Add "My Location" Widget. Issue [#64073](https://github.com/flutter/flutter/issues/64073)
 * Adds options for gesture handling and tilt controls.
 
 ## 0.5.1

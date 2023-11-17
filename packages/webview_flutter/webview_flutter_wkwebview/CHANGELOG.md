@@ -1,3 +1,7 @@
+## 3.9.5
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+ 
 ## 3.9.4
 
 * Updates to Pigeon 13.

@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support for picture-in-picture.
+
 ## 2.5.7
 
 * Adds frame availability checks on iOS.

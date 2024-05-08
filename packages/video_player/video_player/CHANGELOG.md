@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Adds support for picture-in-picture on iOS.
+
 ## 2.8.6
 
 * Updates minimum iOS implementation version to include a privacy manifest.
@@ -47,6 +51,7 @@
 receives an`Uri` instead of a `String` url.
 * Deprecates `VideoPlayerController.network` factory method.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.6.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.

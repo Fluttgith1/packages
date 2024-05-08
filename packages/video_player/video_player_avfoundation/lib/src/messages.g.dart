@@ -71,12 +71,160 @@ class CreationOptions {
   }
 }
 
+class AutomaticallyStartsPictureInPictureMessage {
+  AutomaticallyStartsPictureInPictureMessage({
+    required this.textureId,
+    required this.enableStartPictureInPictureAutomaticallyFromInline,
+  });
+
+  int textureId;
+
+  bool enableStartPictureInPictureAutomaticallyFromInline;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+      enableStartPictureInPictureAutomaticallyFromInline,
+    ];
+  }
+
+  static AutomaticallyStartsPictureInPictureMessage decode(Object result) {
+    result as List<Object?>;
+    return AutomaticallyStartsPictureInPictureMessage(
+      textureId: result[0]! as int,
+      enableStartPictureInPictureAutomaticallyFromInline: result[1]! as bool,
+    );
+  }
+}
+
+class SetPictureInPictureOverlaySettingsMessage {
+  SetPictureInPictureOverlaySettingsMessage({
+    required this.textureId,
+    this.settings,
+  });
+
+  int textureId;
+
+  PictureInPictureOverlaySettingsMessage? settings;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+      settings?.encode(),
+    ];
+  }
+
+  static SetPictureInPictureOverlaySettingsMessage decode(Object result) {
+    result as List<Object?>;
+    return SetPictureInPictureOverlaySettingsMessage(
+      textureId: result[0]! as int,
+      settings: result[1] != null
+          ? PictureInPictureOverlaySettingsMessage.decode(
+              result[1]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+class PictureInPictureOverlaySettingsMessage {
+  PictureInPictureOverlaySettingsMessage({
+    required this.top,
+    required this.left,
+    required this.width,
+    required this.height,
+  });
+
+  double top;
+
+  double left;
+
+  double width;
+
+  double height;
+
+  Object encode() {
+    return <Object?>[
+      top,
+      left,
+      width,
+      height,
+    ];
+  }
+
+  static PictureInPictureOverlaySettingsMessage decode(Object result) {
+    result as List<Object?>;
+    return PictureInPictureOverlaySettingsMessage(
+      top: result[0]! as double,
+      left: result[1]! as double,
+      width: result[2]! as double,
+      height: result[3]! as double,
+    );
+  }
+}
+
+class StartPictureInPictureMessage {
+  StartPictureInPictureMessage({
+    required this.textureId,
+  });
+
+  int textureId;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+    ];
+  }
+
+  static StartPictureInPictureMessage decode(Object result) {
+    result as List<Object?>;
+    return StartPictureInPictureMessage(
+      textureId: result[0]! as int,
+    );
+  }
+}
+
+class StopPictureInPictureMessage {
+  StopPictureInPictureMessage({
+    required this.textureId,
+  });
+
+  int textureId;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+    ];
+  }
+
+  static StopPictureInPictureMessage decode(Object result) {
+    result as List<Object?>;
+    return StopPictureInPictureMessage(
+      textureId: result[0]! as int,
+    );
+  }
+}
+
 class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   const _AVFoundationVideoPlayerApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is CreationOptions) {
+    if (value is AutomaticallyStartsPictureInPictureMessage) {
       buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is CreationOptions) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is PictureInPictureOverlaySettingsMessage) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is SetPictureInPictureOverlaySettingsMessage) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is StartPictureInPictureMessage) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is StopPictureInPictureMessage) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -87,7 +235,20 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
+        return AutomaticallyStartsPictureInPictureMessage.decode(
+            readValue(buffer)!);
+      case 129:
         return CreationOptions.decode(readValue(buffer)!);
+      case 130:
+        return PictureInPictureOverlaySettingsMessage.decode(
+            readValue(buffer)!);
+      case 131:
+        return SetPictureInPictureOverlaySettingsMessage.decode(
+            readValue(buffer)!);
+      case 132:
+        return StartPictureInPictureMessage.decode(readValue(buffer)!);
+      case 133:
+        return StopPictureInPictureMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -371,6 +532,133 @@ class AVFoundationVideoPlayerApi {
     );
     final List<Object?>? __pigeon_replyList =
         await __pigeon_channel.send(<Object?>[mixWithOthers]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<bool> isPictureInPictureSupported() async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isPictureInPictureSupported$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  Future<void> setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage msg) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setPictureInPictureOverlaySettings$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[msg]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage msg) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setAutomaticallyStartsPictureInPicture$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[msg]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> startPictureInPicture(StartPictureInPictureMessage msg) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.startPictureInPicture$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[msg]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> stopPictureInPicture(StopPictureInPictureMessage msg) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.stopPictureInPicture$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[msg]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {

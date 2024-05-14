@@ -3,9 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 
 import './base.dart';
+import 'x_file_source.dart';
 
 // ignore_for_file: avoid_unused_constructor_parameters
 
@@ -44,6 +46,18 @@ class XFile extends XFileBase {
     String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
   }) : super(path) {
+    throw UnimplementedError(
+        'CrossFile is not available in your current platform.');
+  }
+
+  /// Construct a CrossFile object from an instance of `XFileSource`.
+  ///
+  /// All exceptions thrown by any member of the implementation of the source
+  /// won't be altered or caught by this `XFile`.
+  XFile.fromCustomSource(
+    XFileSource source, {
+    @visibleForTesting CrossFileTestOverrides? overrides,
+  }) : super(null) {
     throw UnimplementedError(
         'CrossFile is not available in your current platform.');
   }

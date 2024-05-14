@@ -12,6 +12,8 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
 
+import 'common.dart';
+
 final String pathPrefix =
     Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
 final String path = '${pathPrefix}hello.txt';
@@ -79,6 +81,41 @@ void main() {
 
   group('Create with data', () {
     final XFile file = XFile.fromData(bytes);
+
+    test('Can be read as a string', () async {
+      expect(await file.readAsString(), equals(expectedStringContents));
+    });
+    test('Can be read as bytes', () async {
+      expect(await file.readAsBytes(), equals(bytes));
+    });
+
+    test('Can be read as a stream', () async {
+      expect(await file.openRead().first, equals(bytes));
+    });
+
+    test('Stream can be sliced', () async {
+      expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
+    });
+
+    test('Function saveTo(..) creates file', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      if (targetFile.existsSync()) {
+        await targetFile.delete();
+      }
+
+      await file.saveTo(targetFile.path);
+
+      expect(targetFile.existsSync(), isTrue);
+      expect(targetFile.readAsStringSync(), 'Hello, world!');
+
+      await tempDir.delete(recursive: true);
+    });
+  });
+
+  group('Create with a custom source', () {
+    final XFile file = XFile.fromCustomSource(TestXFileSource(
+        DateTime.now(), 'text/plain', bytes, textFilePath, null));
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));

@@ -229,7 +229,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         for (final File driver in drivers) {
           final List<File> failingTargets = await _driveTests(
               example, driver, testTargets,
-              deviceFlags: deviceFlags);
+              deviceFlags: deviceFlags, exampleName: exampleName);
           for (final File failingTarget in failingTargets) {
             errors.add(
                 getRelativePosixPath(failingTarget, from: package.directory));
@@ -376,12 +376,22 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     File driver,
     List<File> targets, {
     required List<String> deviceFlags,
+    required String exampleName,
   }) async {
     final List<File> failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
 
+    final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
+    Directory? logsDirectory;
+    if (logsDirectoryPath != null) {
+      logsDirectory = driver.fileSystem.directory(logsDirectory);
+    }
     for (final File target in targets) {
+      Directory? screenshotDirectory;
+      if (logsDirectory != null) {
+        screenshotDirectory = logsDirectory.childDirectory(exampleName);
+      }
       final int exitCode = await processRunner.runAndStream(
           flutterCommand,
           <String>[
@@ -393,6 +403,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             getRelativePosixPath(driver, from: example.directory),
             '--target',
             getRelativePosixPath(target, from: example.directory),
+            if (screenshotDirectory != null)
+              '--screenshot=${screenshotDirectory.path}',
           ],
           workingDir: example.directory);
       if (exitCode != 0) {

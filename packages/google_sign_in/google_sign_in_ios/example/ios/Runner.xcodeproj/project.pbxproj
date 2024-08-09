@@ -639,6 +639,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.googleSignInExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wno-deprecated-declarations";
 			};
 			name = Debug;
 		};
@@ -663,6 +664,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.googleSignInExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wno-deprecated-declarations";
 			};
 			name = Release;
 		};

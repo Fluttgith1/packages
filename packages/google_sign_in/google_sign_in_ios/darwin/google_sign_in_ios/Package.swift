@@ -45,7 +45,7 @@ let package = Package(
 
         // Ignore AppAuth's warnings.
         // https://github.com/openid/AppAuth-iOS/issues/703
-        .unsafeFlags(["-w"]),
+        //.unsafeFlags(["-w"]),
       ]
     )
   ]

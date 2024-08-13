@@ -63,7 +63,8 @@ typedef NavigatorBuilder = Widget Function(
 ///
 /// If the return value is true or the future resolve to true, the route will
 /// exit as usual. Otherwise, the operation will abort.
-typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
+typedef ExitCallback = FutureOr<bool> Function(
+    BuildContext context, GoRouterState state);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -133,7 +134,7 @@ typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
 ///   routes: <GoRoute>[
 ///     GoRoute(
 ///       path: '/',
-///       redirect: (_) => '/family/${Families.data[0].id}',
+///       redirect: (_, __) => '/family/${Families.data[0].id}',
 ///     ),
 ///     GoRoute(
 ///       path: '/family',
@@ -154,9 +155,66 @@ typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
 @immutable
 abstract class RouteBase with Diagnosticable {
   const RouteBase._({
+    this.redirect,
     required this.routes,
     required this.parentNavigatorKey,
   });
+
+  /// An optional redirect function for this route.
+  ///
+  /// In the case that you like to make a redirection decision for a specific
+  /// route (or sub-route), consider doing so by passing a redirect function to
+  /// the GoRoute constructor.
+  ///
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_, __) => '/family/${Families.data[0].id}',
+  ///     ),
+  ///     GoRoute(
+  ///       path: '/family/:fid',
+  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  ///
+  /// If there are multiple redirects in the matched routes, the parent route's
+  /// redirect takes priority over sub-route's.
+  ///
+  /// For example:
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       redirect: (_, __) => '/page1', // this takes priority over the sub-route.
+  ///       routes: <GoRoute>[
+  ///         GoRoute(
+  ///           path: 'child',
+  ///           redirect: (_, __) => '/page2',
+  ///         ),
+  ///       ],
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  ///
+  /// The `context.go('/child')` will be redirected to `/page1` instead of
+  /// `/page2`.
+  ///
+  /// Redirect can also be used for conditionally preventing users from visiting
+  /// routes, also known as route guards. One canonical example is user
+  /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
+  /// for a complete runnable example.
+  ///
+  /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the
+  /// redirection (which is how `of` method is usually implemented), a
+  /// re-evaluation will be triggered if the [InheritedWidget] changes.
+  final GoRouterRedirect? redirect;
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
@@ -211,7 +269,7 @@ class GoRoute extends RouteBase {
     this.builder,
     this.pageBuilder,
     super.parentNavigatorKey,
-    this.redirect,
+    super.redirect,
     this.onExit,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
@@ -327,62 +385,6 @@ class GoRoute extends RouteBase {
   ///
   final GoRouterWidgetBuilder? builder;
 
-  /// An optional redirect function for this route.
-  ///
-  /// In the case that you like to make a redirection decision for a specific
-  /// route (or sub-route), consider doing so by passing a redirect function to
-  /// the GoRoute constructor.
-  ///
-  /// For example:
-  /// ```dart
-  /// final GoRouter _router = GoRouter(
-  ///   routes: <GoRoute>[
-  ///     GoRoute(
-  ///       path: '/',
-  ///       redirect: (_) => '/family/${Families.data[0].id}',
-  ///     ),
-  ///     GoRoute(
-  ///       path: '/family/:fid',
-  ///       pageBuilder: (BuildContext context, GoRouterState state) => ...,
-  ///     ),
-  ///   ],
-  /// );
-  /// ```
-  ///
-  /// If there are multiple redirects in the matched routes, the parent route's
-  /// redirect takes priority over sub-route's.
-  ///
-  /// For example:
-  /// ```dart
-  /// final GoRouter _router = GoRouter(
-  ///   routes: <GoRoute>[
-  ///     GoRoute(
-  ///       path: '/',
-  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
-  ///       routes: <GoRoute>[
-  ///         GoRoute(
-  ///           path: 'child',
-  ///           redirect: (_) => '/page2',
-  ///         ),
-  ///       ],
-  ///     ),
-  ///   ],
-  /// );
-  /// ```
-  ///
-  /// The `context.go('/child')` will be redirected to `/page1` instead of
-  /// `/page2`.
-  ///
-  /// Redirect can also be used for conditionally preventing users from visiting
-  /// routes, also known as route guards. One canonical example is user
-  /// authentication. See [Redirection](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart)
-  /// for a complete runnable example.
-  ///
-  /// If [BuildContext.dependOnInheritedWidgetOfExactType] is used during the
-  /// redirection (which is how `of` method is usually implemented), a
-  /// re-evaluation will be triggered if the [InheritedWidget] changes.
-  final GoRouterRedirect? redirect;
-
   /// Called when this route is removed from GoRouter's route history.
   ///
   /// Some example this callback may be called:
@@ -460,9 +462,11 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._(
-      {required super.routes, required super.parentNavigatorKey})
-      : super._();
+  const ShellRouteBase._({
+    super.redirect,
+    required super.routes,
+    required super.parentNavigatorKey,
+  }) : super._();
 
   static void _debugCheckSubRouteParentNavigatorKeys(
       List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
@@ -625,6 +629,7 @@ class ShellRouteContext {
 class ShellRoute extends ShellRouteBase {
   /// Constructs a [ShellRoute].
   ShellRoute({
+    super.redirect,
     this.builder,
     this.pageBuilder,
     this.observers,
@@ -775,6 +780,8 @@ class ShellRoute extends ShellRouteBase {
 /// * [Custom StatefulShellRoute example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/others/custom_stateful_shell_route.dart)
 /// which demonstrates how to customize the container for the branch Navigators
 /// and how to implement animated transitions when switching branches.
+///
+/// {@category Configuration}
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).
@@ -785,6 +792,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [navigatorContainerBuilder].
   StatefulShellRoute({
     required this.branches,
+    super.redirect,
     this.builder,
     this.pageBuilder,
     required this.navigatorContainerBuilder,
@@ -811,12 +819,14 @@ class StatefulShellRoute extends ShellRouteBase {
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
+    GoRouterRedirect? redirect,
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
     String? restorationScopeId,
   }) : this(
           branches: branches,
+          redirect: redirect,
           builder: builder,
           pageBuilder: pageBuilder,
           parentNavigatorKey: parentNavigatorKey,
@@ -1129,7 +1139,12 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      return _router.configuration.locationForRoute(route)!;
+      final List<String> parameters = <String>[];
+      patternToRegExp(route.path, parameters);
+      assert(parameters.isEmpty);
+      final String fullPath = _router.configuration.locationForRoute(route)!;
+      return patternToPath(
+          fullPath, shellRouteContext.routerState.pathParameters);
     }
   }
 

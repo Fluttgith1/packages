@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 4.8.0
+
+* Adds `onHttpError` callback to `NavigationDelegate` to catch HTTP error status codes.
+
 ## 4.7.0
 
 * Adds support to track scroll position changes.

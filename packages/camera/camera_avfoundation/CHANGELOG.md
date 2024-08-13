@@ -1,3 +1,56 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.9.17+3
+
+* Fixes deallocation of camera on dispose.
+
+## 0.9.17+2
+
+* Fixes stopVideoRecording waiting indefinitely and lag at start of video.
+
+## 0.9.17+1
+
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
+
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
+
+## 0.9.16+2
+
+* Fixes regression taking a picture in torch mode.
+
+## 0.9.16+1
+
+* Fixes sample times not being numeric after pause/resume.
+
+## 0.9.16
+
+* Converts Dart-to-host communcation to Pigeon.
+* Fixes a race condition in camera disposal.
+
+## 0.9.15+4
+
+* Converts host-to-Dart communcation to Pigeon.
+
+## 0.9.15+3
+
+* Moves `pigeon` to `dev_dependencies`.
+
+## 0.9.15+2
+
+* Converts camera query to Pigeon.
+
+## 0.9.15+1
+
+* Simplifies internal handling of method channel responses.
+
 ## 0.9.15
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
@@ -105,11 +158,11 @@
 
 ## 0.9.8+5
 
-* Fixes a regression introduced in 0.9.8+4 where the stream handler is not set. 
+* Fixes a regression introduced in 0.9.8+4 where the stream handler is not set.
 
 ## 0.9.8+4
 
-* Fixes a crash due to sending orientation change events when the engine is torn down. 
+* Fixes a crash due to sending orientation change events when the engine is torn down.
 
 ## 0.9.8+3
 

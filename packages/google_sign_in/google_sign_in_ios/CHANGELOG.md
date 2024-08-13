@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 5.7.6
+
+* Upgrades GoogleSignIn iOS SDK to 7.1.
+
 ## 5.7.5
 
 * Pins GoogleSignIn to iOS SDK "7.0.0" while preparing the update to 7.1.

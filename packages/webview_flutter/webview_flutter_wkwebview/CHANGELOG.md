@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 3.14.0
+
+* Adds Swift Package Manager compatibility.
+
+## 3.13.1
+
+* Fixes `JSON.stringify()` cannot serialize cyclic structures.
+
 ## 3.13.0
 
 * Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the

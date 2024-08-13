@@ -1,3 +1,35 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.3.17+3
+
+* Converts TranslatorTests to swift.
+
+## 0.3.17+2
+
+* Converts FIAPPaymentQueueDeleteTests to swift.
+
+## 0.3.17+1
+
+* Converts main plugin tests to swift.
+
+## 0.3.17
+
+* Removes OCMock from tests.
+
+## 0.3.16
+
+* Converts main plugin class to Swift.
+
+## 0.3.15
+
+* Replaces `getCountryCode` with `countryCode`.
+
+## 0.3.14
+
+* Adds `countryCode` API.
+
 ## 0.3.13+1
 
 * Handle translation of errors nested in dictionaries.

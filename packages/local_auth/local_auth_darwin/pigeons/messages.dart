@@ -6,9 +6,12 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut: 'darwin/Classes/messages.g.h',
-  objcSourceOut: 'darwin/Classes/messages.g.m',
+  objcHeaderOut:
+      'darwin/local_auth_darwin/Sources/local_auth_darwin/include/local_auth_darwin/messages.g.h',
+  objcSourceOut:
+      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.m',
   objcOptions: ObjcOptions(
+    headerIncludePath: './include/local_auth_darwin/messages.g.h',
     prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
   ),
   copyrightHeader: 'pigeons/copyright.txt',
@@ -22,16 +25,16 @@ class AuthStrings {
   const AuthStrings({
     required this.reason,
     required this.lockOut,
-    required this.goToSettingsButton,
-    required this.goToSettingsDescription,
+    this.goToSettingsButton,
+    this.goToSettingsDescription,
     required this.cancelButton,
     required this.localizedFallbackTitle,
   });
 
   final String reason;
   final String lockOut;
-  final String goToSettingsButton;
-  final String goToSettingsDescription;
+  final String? goToSettingsButton;
+  final String? goToSettingsDescription;
   final String cancelButton;
   final String? localizedFallbackTitle;
 }

@@ -127,7 +127,7 @@ typedef ExitCallback = FutureOr<bool> Function(
 /// If there are multiple routes that match the location, the first match is used.
 /// To make predefined routes to take precedence over dynamic routes eg. '/:id'
 /// consider adding the dynamic route at the end of the routes.
-/// 
+///
 /// For example:
 /// ```dart
 /// final GoRouter _router = GoRouter(
@@ -147,10 +147,10 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///   ],
 /// );
 /// ```
-/// 
+///
 /// In the above example, if `/family` route is matched, it will be used.
 /// else `/:username` route will be used.
-/// 
+///
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
 abstract class RouteBase with Diagnosticable {
@@ -167,7 +167,7 @@ abstract class RouteBase with Diagnosticable {
   /// the GoRoute constructor.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
@@ -186,7 +186,7 @@ abstract class RouteBase with Diagnosticable {
   /// redirect takes priority over sub-route's.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(

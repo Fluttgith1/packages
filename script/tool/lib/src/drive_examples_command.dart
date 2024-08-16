@@ -396,16 +396,15 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           flutterCommand,
           <String>[
             'drive',
-            '-v',
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
+            if (screenshotDirectory != null)
+              '--screenshot=${screenshotDirectory.path}',
             '--driver',
             getRelativePosixPath(driver, from: example.directory),
             '--target',
             getRelativePosixPath(target, from: example.directory),
-            if (screenshotDirectory != null)
-              '--screenshot=${screenshotDirectory.path}',
           ],
           workingDir: example.directory);
       if (exitCode != 0) {
@@ -419,7 +418,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
     Directory? logsDirectory;
     if (logsDirectoryPath != null) {
-      logsDirectory = fileSystem.directory(logsDirectory);
+      logsDirectory = fileSystem.directory(logsDirectoryPath);
       print('found logsDirectory ${logsDirectory.path}');
     }
     return logsDirectory;
@@ -459,13 +458,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           flutterCommand,
           <String>[
             'test',
-            '-v',
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
-            target,
             if (logsDirectory != null)
               '--debug-logs-dir=${logsDirectory.path}',
+            target,
           ],
           workingDir: example.directory);
       passed = passed && (exitCode == 0);

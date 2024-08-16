@@ -288,33 +288,7 @@ void main() {
       );
     });
 
-    test('driving when plugin does not support Linux is a no-op', () async {
-      createFakePlugin('plugin', packagesDir, extraFiles: <String>[
-        'example/integration_test/plugin_test.dart',
-      ]);
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'drive-examples',
-        '--ios',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('Skipping unsupported platform linux...'),
-          contains('No issues found!'),
-        ]),
-      );
-
-      // Output should be empty since running drive-examples --linux on a non-Linux
-      // plugin is a no-op.
-      expect(processRunner.recordedCalls, <ProcessCall>[]);
-    });
-
-    test('handles missing CI debug logs directory', () async {
-      mockPlatform.environment.remove('FLUTTER_LOGS_DIR');
-
+    test('tests an iOS plugin', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -356,13 +330,16 @@ void main() {
                   'test',
                   '-d',
                   _fakeIOSDevice,
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
           ]));
     });
 
-    test('tests an iOS plugin', () async {
+    test('handles missing CI debug logs directory', () async {
+      mockPlatform.environment.remove('FLUTTER_LOGS_DIR');
+
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -404,7 +381,6 @@ void main() {
                   'test',
                   '-d',
                   _fakeIOSDevice,
-                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),

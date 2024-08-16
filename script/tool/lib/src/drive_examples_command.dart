@@ -396,6 +396,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           flutterCommand,
           <String>[
             'drive',
+            '-v',
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
@@ -419,6 +420,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     Directory? logsDirectory;
     if (logsDirectoryPath != null) {
       logsDirectory = fileSystem.directory(logsDirectory);
+      print('found logsDirectory ${logsDirectory.path}');
     }
     return logsDirectory;
   }
@@ -457,6 +459,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           flutterCommand,
           <String>[
             'test',
+            '-v',
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',

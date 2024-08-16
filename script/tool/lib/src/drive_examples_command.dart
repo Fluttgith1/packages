@@ -228,8 +228,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         }
         for (final File driver in drivers) {
           final List<File> failingTargets = await _driveTests(
-              example, driver, testTargets,
-              deviceFlags: deviceFlags, exampleName: exampleName);
+            example,
+            driver,
+            testTargets,
+            deviceFlags: deviceFlags,
+            exampleName: exampleName,
+          );
           for (final File failingTarget in failingTargets) {
             errors.add(
                 getRelativePosixPath(failingTarget, from: package.directory));
@@ -381,16 +385,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     final List<File> failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
+    final Directory? logsDirectory = _logsDirectory(driver.fileSystem);
 
-    final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
-    Directory? logsDirectory;
-    if (logsDirectoryPath != null) {
-      logsDirectory = driver.fileSystem.directory(logsDirectory);
-    }
     for (final File target in targets) {
       Directory? screenshotDirectory;
       if (logsDirectory != null) {
-        screenshotDirectory = logsDirectory.childDirectory(exampleName);
+        screenshotDirectory = logsDirectory.childDirectory('$exampleName-drive');
       }
       final int exitCode = await processRunner.runAndStream(
           flutterCommand,
@@ -414,6 +414,15 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     return failures;
   }
 
+  Directory? _logsDirectory(FileSystem fileSystem) {
+    final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
+    Directory? logsDirectory;
+    if (logsDirectoryPath != null) {
+      logsDirectory = fileSystem.directory(logsDirectory);
+    }
+    return logsDirectory;
+  }
+
   /// Uses `flutter test integration_test` to run [example], returning the
   /// success of the test run.
   ///
@@ -428,6 +437,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     required List<File> testFiles,
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
+    final Directory? logsDirectory = testFiles.isNotEmpty ? _logsDirectory(testFiles.first.fileSystem) : null;
 
     // Workaround for https://github.com/flutter/flutter/issues/135673
     // Once that is fixed on stable, this logic can be removed and the command
@@ -451,6 +461,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
             target,
+            if (logsDirectory != null)
+              '--debug-logs-dir=${logsDirectory.path}',
           ],
           workingDir: example.directory);
       passed = passed && (exitCode == 0);

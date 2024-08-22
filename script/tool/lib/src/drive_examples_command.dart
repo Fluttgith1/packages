@@ -385,7 +385,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     final List<File> failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
-    final Directory? logsDirectory = _logsDirectory(driver.fileSystem);
+    final Directory? logsDirectory = ciLogsDirectory(platform, driver.fileSystem);
 
     for (final File target in targets) {
       Directory? screenshotDirectory;
@@ -414,16 +414,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     return failures;
   }
 
-  Directory? _logsDirectory(FileSystem fileSystem) {
-    final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
-    Directory? logsDirectory;
-    if (logsDirectoryPath != null) {
-      logsDirectory = fileSystem.directory(logsDirectoryPath);
-      print('found logsDirectory ${logsDirectory.path}');
-    }
-    return logsDirectory;
-  }
-
   /// Uses `flutter test integration_test` to run [example], returning the
   /// success of the test run.
   ///
@@ -438,7 +428,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     required List<File> testFiles,
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
-    final Directory? logsDirectory = testFiles.isNotEmpty ? _logsDirectory(testFiles.first.fileSystem) : null;
+    final Directory? logsDirectory = testFiles.isNotEmpty ? ciLogsDirectory(platform, testFiles.first.fileSystem) : null;
 
     // Workaround for https://github.com/flutter/flutter/issues/135673
     // Once that is fixed on stable, this logic can be removed and the command

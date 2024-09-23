@@ -595,7 +595,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     final Uri uri = Uri.parse(path);
     Widget child;
     if (imageBuilder != null) {
-      child = imageBuilder!(uri, title, alt);
+      child = imageBuilder!(uri, title, alt, width, height);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }

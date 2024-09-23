@@ -372,9 +372,10 @@ void defineTests() {
     testWidgets(
       'custom image builder',
       (WidgetTester tester) async {
-        const String data = '![alt](https://img.png)';
-        Widget builder(Uri uri, String? title, String? alt) =>
-            Image.asset('assets/logo.png');
+        const String data = '![alt](https://img.png#60x50)';
+        Widget builder(Uri uri, String? title, String? alt, double? width,
+                double? height) =>
+            Image.asset('assets/logo.png', width: width, height: height);
 
         await tester.pumpWidget(
           boilerplate(
@@ -402,6 +403,8 @@ void defineTests() {
 
         expect(image.image.runtimeType, AssetImage);
         expect((image.image as AssetImage).assetName, 'assets/logo.png');
+        expect(image.width, 60.0);
+        expect(image.height, 50.0);
 
         // Force the asset image to be rasterized so it can be compared.
         await tester.runAsync(() async {

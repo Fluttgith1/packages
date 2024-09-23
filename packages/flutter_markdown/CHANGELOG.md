@@ -1,3 +1,7 @@
+## 0.7.4
+
+* Adds `height` & `width` to `imageBuilder`.
+
 ## 0.7.3+1
 
 * Fixes issue with table column alignments not being respected.

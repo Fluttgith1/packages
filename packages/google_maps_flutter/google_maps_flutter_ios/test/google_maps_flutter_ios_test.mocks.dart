@@ -298,11 +298,15 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> animateCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+  _i3.Future<void> animateCamera(
+    _i2.PlatformCameraUpdate? cameraUpdate, {
+    _i2.PlatformCameraUpdateAnimationConfiguration? configuration,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #animateCamera,
           [cameraUpdate],
+          {#configuration: configuration},
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),

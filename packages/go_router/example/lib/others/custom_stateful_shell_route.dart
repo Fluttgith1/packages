@@ -10,6 +10,12 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+final GlobalKey<NavigatorState> _tabBNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabBNav');
+final GlobalKey<NavigatorState> _tabB1NavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabB1Nav');
+final GlobalKey<NavigatorState> _tabB2NavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabB2Nav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -80,11 +86,15 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 
           // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
+            navigatorKey: _tabBNavigatorKey,
+            // To enable preloading of the initial locations of branches, pass
+            // `true` for the parameter `preload` (`false` is default).
+            preload: true,
             // StatefulShellBranch will automatically use the first descendant
             // GoRoute as the initial location of the branch. If another route
             // is desired, specify the location of it using the defaultLocation
             // parameter.
-            // defaultLocation: '/c2',
+            // defaultLocation: '/b1',
             routes: <RouteBase>[
               StatefulShellRoute(
                 builder: (BuildContext context, GoRouterState state,
@@ -107,44 +117,53 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // This bottom tab uses a nested shell, wrapping sub routes in a
                 // top TabBar.
                 branches: <StatefulShellBranch>[
-                  StatefulShellBranch(routes: <GoRoute>[
-                    GoRoute(
-                      path: '/b1',
-                      builder: (BuildContext context, GoRouterState state) =>
-                          const TabScreen(
-                              label: 'B1', detailsPath: '/b1/details'),
-                      routes: <RouteBase>[
+                  StatefulShellBranch(
+                      navigatorKey: _tabB1NavigatorKey,
+                      routes: <GoRoute>[
                         GoRoute(
-                          path: 'details',
+                          path: '/b1',
                           builder:
                               (BuildContext context, GoRouterState state) =>
-                                  const DetailsScreen(
-                            label: 'B1',
-                            withScaffold: false,
-                          ),
+                                  const TabScreen(
+                                      label: 'B1', detailsPath: '/b1/details'),
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'details',
+                              builder:
+                                  (BuildContext context, GoRouterState state) =>
+                                      const DetailsScreen(
+                                label: 'B1',
+                                withScaffold: false,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]),
-                  StatefulShellBranch(routes: <GoRoute>[
-                    GoRoute(
-                      path: '/b2',
-                      builder: (BuildContext context, GoRouterState state) =>
-                          const TabScreen(
-                              label: 'B2', detailsPath: '/b2/details'),
-                      routes: <RouteBase>[
+                      ]),
+                  StatefulShellBranch(
+                      navigatorKey: _tabB2NavigatorKey,
+                      // To enable preloading for all nested branches, set
+                      // `preload` to `true` (`false` is default).
+                      preload: true,
+                      routes: <GoRoute>[
                         GoRoute(
-                          path: 'details',
+                          path: '/b2',
                           builder:
                               (BuildContext context, GoRouterState state) =>
-                                  const DetailsScreen(
-                            label: 'B2',
-                            withScaffold: false,
-                          ),
+                                  const TabScreen(
+                                      label: 'B2', detailsPath: '/b2/details'),
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'details',
+                              builder:
+                                  (BuildContext context, GoRouterState state) =>
+                                      const DetailsScreen(
+                                label: 'B2',
+                                withScaffold: false,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]),
+                      ]),
                 ],
               ),
             ],
@@ -441,6 +460,11 @@ class TabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// If preloading is enabled on the top StatefulShellRoute, this will be
+    /// printed directly after the app has been started, but only for the route
+    /// that is the initial location ('/b1')
+    debugPrint('Building TabScreen - $label');
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

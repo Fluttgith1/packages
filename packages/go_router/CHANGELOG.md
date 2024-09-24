@@ -1,3 +1,7 @@
+## 14.3.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
 ## 14.2.7
 
 - Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
@@ -71,6 +75,10 @@
 ## 13.2.3
 
 - Fixes an issue where deep links without path caused an exception
+
+## 13.3.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
 
 ## 13.2.2
 

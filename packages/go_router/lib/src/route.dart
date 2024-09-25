@@ -261,7 +261,7 @@ class GoRoute extends RouteBase {
   /// - [path] and [name] cannot be empty strings.
   /// - One of either [builder] or [pageBuilder] must be provided.
   GoRoute({
-    required this.path,
+    required String path,
     this.name,
     this.builder,
     this.pageBuilder,
@@ -345,7 +345,7 @@ class GoRoute extends RouteBase {
   ///
   /// See [Query parameters and path parameters](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/path_and_query_parameters.dart)
   /// to learn more about parameters.
-  final String path;
+  String get path => pattern.toString();
 
   /// A page builder for this route.
   ///

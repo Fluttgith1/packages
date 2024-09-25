@@ -202,7 +202,7 @@ class RouteConfiguration {
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
     _routesByName.clear();
-    _cacheRouteByName(routingTable.routes);
+    _cacheRoutesByName(routingTable.routes);
     log(debugKnownRoutes());
   }
 
@@ -619,7 +619,7 @@ class RouteConfiguration {
   }
 
   /// adds an entry in the _routesByName map for every route and their descendants.
-  void _cacheRouteByName(List<RouteBase> routes) {
+  void _cacheRoutesByName(List<RouteBase> routes) {
     for (final RouteBase route in routes) {
       if (route is GoRoute) {
         if (route.name != null) {
@@ -630,11 +630,11 @@ class RouteConfiguration {
         }
 
         if (route.routes.isNotEmpty) {
-          _cacheRouteByName(route.routes);
+          _cacheRoutesByName(route.routes);
         }
       } else if (route is ShellRouteBase) {
         if (route.routes.isNotEmpty) {
-          _cacheRouteByName(route.routes);
+          _cacheRoutesByName(route.routes);
         }
       }
     }

@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'match.dart';
-import 'path_utils.dart';
+import 'route_pattern.dart';
 import 'router.dart';
 import 'state.dart';
 
@@ -275,10 +275,8 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
-        super._() {
-    // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, pathParameters);
-  }
+        _pattern = RoutePattern(path),
+        super._();
 
   /// Whether this [GoRoute] only redirects to another route.
   ///
@@ -432,12 +430,13 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) =>
-      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  RegExpMatch? matchPatternAsPrefix(String path) => _pattern.match(path);
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      extractPathParameters(pathParameters, match);
+      _pattern.extractPathParameters(match);
+
+  bool get hasParameters => _pattern.hasParameters;
 
   /// The path parameters in this route.
   @internal
@@ -452,7 +451,7 @@ class GoRoute extends RouteBase {
         FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
-  late final RegExp _pathRE;
+  final RoutePattern _pattern;
 }
 
 /// Base class for classes that act as shells for sub-routes, such
@@ -1136,9 +1135,7 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
-      patternToRegExp(route.path, parameters);
-      assert(parameters.isEmpty);
+      assert(!route.hasParameters);
       final String fullPath = _router.configuration.locationForRoute(route)!;
       return patternToPath(
           fullPath, shellRouteContext.routerState.pathParameters);

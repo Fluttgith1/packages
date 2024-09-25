@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'path_utils.dart';
+import 'route_pattern.dart';
 import 'route.dart';
 import 'router.dart';
 import 'state.dart';

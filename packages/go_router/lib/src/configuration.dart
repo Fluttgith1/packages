@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'logging.dart';
 import 'match.dart';
@@ -502,7 +503,8 @@ class RouteConfiguration {
         .join(' => ');
   }
 
-  /// Concatenate a Route's pattern with all its ancestor patterns
+  /// Concatenate a Route's pattern with all its ancestor pattern
+  @internal
   RoutePattern? buildRoutePatternFromRoot(RouteBase route,
       {List<RouteBase>? rootRoutes}) {
     // if the root routes is not provided the top most routes are used

@@ -275,7 +275,7 @@ class GoRoute extends RouteBase {
             'builder, pageBuilder, or redirect must be provided'),
         assert(onExit == null || pageBuilder != null || builder != null,
             'if onExit is provided, one of pageBuilder or builder must be provided'),
-        _pattern = RoutePattern(path),
+        pattern = RoutePattern(path),
         super._();
 
   /// Whether this [GoRoute] only redirects to another route.
@@ -430,13 +430,13 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String path) => _pattern.match(path);
+  RegExpMatch? matchPatternAsPrefix(String path) => pattern.match(path);
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
-      _pattern.extractPathParameters(match);
+      pattern.extractPathParameters(match);
 
-  bool get hasParameters => _pattern.hasParameters;
+  bool get hasParameters => pattern.hasParameters;
 
   /// The path parameters in this route.
   @internal
@@ -451,7 +451,7 @@ class GoRoute extends RouteBase {
         FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
-  final RoutePattern _pattern;
+  final RoutePattern pattern;
 }
 
 /// Base class for classes that act as shells for sub-routes, such

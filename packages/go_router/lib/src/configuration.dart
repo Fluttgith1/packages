@@ -199,7 +199,7 @@ class RouteConfiguration {
     assert(_debugCheckParentNavigatorKeys(
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
-    _nameToPath.clear();
+    _routesByName.clear();
     _cacheNameToPath('', routingTable.routes);
     log(debugKnownRoutes());
   }
@@ -249,7 +249,7 @@ class RouteConfiguration {
   ///    example.
   final Codec<Object?, Object?>? extraCodec;
 
-  final Map<String, String> _nameToPath = <String, String>{};
+  final Map<String, GoRoute> _routesByName = <String, GoRoute>{};
 
   /// Looks up the url location by a [GoRoute]'s name.
   String namedLocation(
@@ -264,20 +264,17 @@ class RouteConfiguration {
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
       return true;
     }());
-    assert(_nameToPath.containsKey(name), 'unknown route name: $name');
-    final String path = _nameToPath[name]!;
+    assert(_routesByName.containsKey(name), 'unknown route name: $name');
+    final GoRoute route = _routesByName[name]!;
     assert(() {
-      // Check that all required params are present
-      final List<String> paramNames = <String>[];
-      patternToRegExp(path, paramNames);
-      for (final String paramName in paramNames) {
+      for (final String paramName in route.pattern.parameters) {
         assert(pathParameters.containsKey(paramName),
-            'missing param "$paramName" for $path');
+            'missing param "$paramName" for ${route.pattern}');
       }
 
       // Check that there are no extra params
       for (final String key in pathParameters.keys) {
-        assert(paramNames.contains(key), 'unknown param "$key" for $path');
+        assert(route.pattern.parameters.contains(key), 'unknown param "$key" for ${route.pattern}');
       }
       return true;
     }());
@@ -285,7 +282,7 @@ class RouteConfiguration {
       for (final MapEntry<String, String> param in pathParameters.entries)
         param.key: Uri.encodeComponent(param.value)
     };
-    final String location = patternToPath(path, encodedParams);
+    final String location = route.pattern.toPath(encodedParams);
     return Uri(
             path: location,
             queryParameters: queryParameters.isEmpty ? null : queryParameters)
@@ -526,10 +523,10 @@ class RouteConfiguration {
     _debugFullPathsFor(
         _routingConfig.value.routes, '', const <_DecorationType>[], sb);
 
-    if (_nameToPath.isNotEmpty) {
+    if (_routesByName.isNotEmpty) {
       sb.writeln('known full paths for route names:');
-      for (final MapEntry<String, String> e in _nameToPath.entries) {
-        sb.writeln('  ${e.key} => ${e.value}');
+      for (final MapEntry<String, GoRoute> e in _routesByName.entries) {
+        sb.writeln('  ${e.key} => ${e.value.pattern.}');
       }
     }
 
@@ -592,10 +589,10 @@ class RouteConfiguration {
         if (route.name != null) {
           final String name = route.name!;
           assert(
-              !_nameToPath.containsKey(name),
+              !_routesByName.containsKey(name),
               'duplication fullpaths for name '
-              '"$name":${_nameToPath[name]}, $fullPath');
-          _nameToPath[name] = fullPath;
+              '"$name":${_routesByName[name]}, $fullPath');
+          _routesByName[name] = fullPath;
         }
 
         if (route.routes.isNotEmpty) {

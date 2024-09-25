@@ -2,11 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// Represents a route pattern such as '/books/:bookId'
 class RoutePattern {
   static final RegExp _parameterRegExp =
       RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
   final String _pattern;
   late final RegExp _patternRegExp;
+
+  /// the parameters presents in the pattern.
+  /// Such that RoutePattern('/users/:userId/books/:bookId')
+  /// will have as parameters ['userId', 'bookId']
   late final List<String> parameters;
 
   RoutePattern(this._pattern) {
@@ -24,7 +29,7 @@ class RoutePattern {
   ///
   /// Example:
   ///
-  /// RoutePattern('/books/:bookgId', {'bookId': 3}) => /books/3
+  /// RoutePattern('/books/:bookgId').toPath({'bookId': 3}) => /books/3
   String toPath(Map<String, String> pathParameters) {
     final StringBuffer buffer = StringBuffer();
     int start = 0;

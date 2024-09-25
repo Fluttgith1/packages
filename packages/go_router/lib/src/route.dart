@@ -436,11 +436,9 @@ class GoRoute extends RouteBase {
   Map<String, String> extractPathParams(RegExpMatch match) =>
       pattern.extractPathParameters(match);
 
-  bool get hasParameters => pattern.hasParameters;
-
   /// The path parameters in this route.
   @internal
-  final List<String> pathParameters = <String>[];
+  List<String> get pathParameters => pattern.parameters;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -1135,10 +1133,10 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      assert(!route.hasParameters);
-      final String fullPath = _router.configuration.locationForRoute(route)!;
-      return patternToPath(
-          fullPath, shellRouteContext.routerState.pathParameters);
+      assert(route.pattern.parameters.isEmpty);
+      final RoutePattern fullPattern =
+          _router.configuration.buildRoutePatternFromRoot(route)!;
+      return fullPattern.toPath(shellRouteContext.routerState.pathParameters);
     }
   }
 

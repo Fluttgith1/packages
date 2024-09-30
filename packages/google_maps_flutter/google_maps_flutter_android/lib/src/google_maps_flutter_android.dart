@@ -1196,7 +1196,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    cloudMapId: config.cloudMapId,
+    mapId: config.mapId,
     style: config.style,
   );
 }
@@ -1237,7 +1237,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
     liteModeEnabled: options['liteModeEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }

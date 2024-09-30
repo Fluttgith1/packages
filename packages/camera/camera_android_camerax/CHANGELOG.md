@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.8+3
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.

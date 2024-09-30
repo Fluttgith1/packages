@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.0
 
+* Adds video stabilization.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.9.17+3

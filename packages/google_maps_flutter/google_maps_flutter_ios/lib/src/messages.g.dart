@@ -539,7 +539,7 @@ class PlatformMapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
-    this.cloudMapId,
+    this.mapId,
     this.style,
   });
 
@@ -573,7 +573,7 @@ class PlatformMapConfiguration {
 
   bool? buildingsEnabled;
 
-  String? cloudMapId;
+  String? mapId;
 
   String? style;
 
@@ -594,7 +594,7 @@ class PlatformMapConfiguration {
       indoorViewEnabled,
       trafficEnabled,
       buildingsEnabled,
-      cloudMapId,
+      mapId,
       style,
     ];
   }
@@ -617,7 +617,7 @@ class PlatformMapConfiguration {
       indoorViewEnabled: result[12] as bool?,
       trafficEnabled: result[13] as bool?,
       buildingsEnabled: result[14] as bool?,
-      cloudMapId: result[15] as String?,
+      mapId: result[15] as String?,
       style: result[16] as String?,
     );
   }

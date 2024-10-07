@@ -118,8 +118,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
     NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
+
     for (AVCaptureDevice *device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
+      FCPPlatformCameraLensType lensType;
+
       switch (device.position) {
         case AVCaptureDevicePositionBack:
           lensFacing = FCPPlatformCameraLensDirectionBack;
@@ -131,8 +134,36 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           lensFacing = FCPPlatformCameraLensDirectionExternal;
           break;
       }
+
+      if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInWideAngleCamera]) {
+        lensType = FCPPlatformCameraLensTypeWide;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
+        lensType = FCPPlatformCameraLensTypeTelephoto;
+      } else if (@available(iOS 13.0, *)) {
+        if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
+          lensType = FCPPlatformCameraLensTypeUltraWide;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualCamera]) {
+          lensType = FCPPlatformCameraLensTypeDual;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
+          lensType = FCPPlatformCameraLensTypeDualWide;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTripleCamera]) {
+          lensType = FCPPlatformCameraLensTypeTriple;
+        } else {
+          lensType = FCPPlatformCameraLensTypeUnknown;
+        }
+      } else if (@available(iOS 17.0, *)) {
+        if ([device.deviceType isEqualToString:AVCaptureDeviceTypeContinuityCamera]) {
+          lensType = FCPPlatformCameraLensTypeContinuity;
+        } else {
+          lensType = FCPPlatformCameraLensTypeUnknown;
+        }
+      } else {
+        lensType = FCPPlatformCameraLensTypeUnknown;
+      }
+
       [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
-                                                    lensDirection:lensFacing]];
+                                                    lensDirection:lensFacing
+                                                         lensType:lensType]];
     }
     completion(reply, nil);
   });

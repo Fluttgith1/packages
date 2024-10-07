@@ -106,6 +106,13 @@
   self.marker.zIndex = zIndex;
 }
 
+- (void)setCollisionBehavior:(int)collisionBehavior {
+  if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
+    GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior;
+    [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
+  }
+}
+
 - (void)interpretMarkerOptions:(NSDictionary *)data
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    screenScale:(CGFloat)screenScale {
@@ -150,6 +157,10 @@
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
+  }
+  NSNumber *collisionBehavior = FGMGetValueOrNilFromDict(data, @"collisionBehavior");
+  if (collisionBehavior) {
+    [self setCollisionBehavior:[collisionBehavior intValue]];
   }
 }
 
@@ -482,7 +493,9 @@
   CLLocationCoordinate2D position = [FLTMarkersController getPosition:markerToAdd];
   NSString *markerIdentifier = markerToAdd[@"markerId"];
   NSString *clusterManagerIdentifier = markerToAdd[@"clusterManagerId"];
-  GMSMarker *marker = [GMSMarker markerWithPosition:position];
+  NSNumber *isAdvanced = markerToAdd[@"isAdvanced"];
+  GMSMarker *marker = isAdvanced ? [GMSAdvancedMarker markerWithPosition:position]
+                                 : [GMSMarker markerWithPosition:position];
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier

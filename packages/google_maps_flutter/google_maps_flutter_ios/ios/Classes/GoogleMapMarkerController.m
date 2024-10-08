@@ -320,7 +320,7 @@
                    userInfo:nil];
       @throw exception;
     }
-      
+
     GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
     NSNumber *backgroundColor = FGMGetValueOrNilFromDict(byteData, @"backgroundColor");
     if (backgroundColor) {
@@ -335,6 +335,7 @@
     GMSPinImageGlyph *glyph;
     NSString *glyphText = FGMGetValueOrNilFromDict(byteData, @"glyphText");
     NSNumber *glyphColor = FGMGetValueOrNilFromDict(byteData, @"glyphColor");
+    NSObject *glyphBitmap = FGMGetValueOrNilFromDict(byteData, @"glyphBitmapDescriptor");
     if (glyphText) {
       NSNumber *glyphTextColorInt = FGMGetValueOrNilFromDict(byteData, @"glyphTextColor");
       UIColor *glyphTextColor = glyphTextColorInt
@@ -344,14 +345,19 @@
     } else if (glyphColor) {
       UIColor *color = [self UIColorFromRGB:[glyphColor intValue]];
       glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+    } else if (glyphBitmap) {
+      NSArray *glyphBitmapArray = (NSArray *)glyphBitmap;
+      UIImage *glyphImage = [self extractIconFromData:glyphBitmapArray
+                                            registrar:registrar
+                                          screenScale:screenScale];
+      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
     }
-    // TODO bitmap descriptor
 
     if (glyph) {
       options.glyph = glyph;
     }
 
-      image = [GMSPinImage pinImageWithOptions:options];
+    image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;

@@ -207,6 +207,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.markerType,
   });
 
   final PlatformCameraPosition initialCameraPosition;

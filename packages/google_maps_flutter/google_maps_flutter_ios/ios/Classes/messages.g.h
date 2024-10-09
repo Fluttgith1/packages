@@ -28,6 +28,17 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)initWithValue:(FGMPlatformMapType)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FGMPlatformMarkerType) {
+  FGMPlatformMarkerTypeLegacy = 0,
+  FGMPlatformMarkerTypeAdvanced = 1,
+};
+
+/// Wrapper for FGMPlatformMarkerType to allow for nullability.
+@interface FGMPlatformMarkerTypeBox : NSObject
+@property(nonatomic, assign) FGMPlatformMarkerType value;
+- (instancetype)initWithValue:(FGMPlatformMarkerType)value;
+@end
+
 @class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
@@ -226,7 +237,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
                  initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
                   initialHeatmaps:(NSArray<FGMPlatformHeatmap *> *)initialHeatmaps
               initialTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays
-           initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers;
+           initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers
+                       markerType:(FGMPlatformMarkerType)markerType;
 @property(nonatomic, strong) FGMPlatformCameraPosition *initialCameraPosition;
 @property(nonatomic, strong) FGMPlatformMapConfiguration *mapConfiguration;
 @property(nonatomic, copy) NSArray<FGMPlatformCircle *> *initialCircles;
@@ -236,6 +248,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @property(nonatomic, copy) NSArray<FGMPlatformHeatmap *> *initialHeatmaps;
 @property(nonatomic, copy) NSArray<FGMPlatformTileOverlay *> *initialTileOverlays;
 @property(nonatomic, copy) NSArray<FGMPlatformClusterManager *> *initialClusterManagers;
+@property(nonatomic, assign) FGMPlatformMarkerType markerType;
 @end
 
 /// Pigeon equivalent of MapConfiguration.

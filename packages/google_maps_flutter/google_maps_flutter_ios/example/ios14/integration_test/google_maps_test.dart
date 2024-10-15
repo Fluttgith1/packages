@@ -1153,7 +1153,7 @@ void main() {
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
           clusterManagers: clusterManagers,
-          markerType: MarkerType.advanced,
+          markerType: MarkerType.advancedMarker,
           markers: Set<Marker>.of(markers.values),
           onMapCreated: (ExampleGoogleMapController googleMapController) {
             controllerCompleter.complete(googleMapController);
@@ -1400,7 +1400,7 @@ void main() {
             target: LatLng(10.0, 20.0),
           ),
           markers: markers,
-          markerType: MarkerType.advanced,
+          markerType: MarkerType.advancedMarker,
         ),
       ),
     );

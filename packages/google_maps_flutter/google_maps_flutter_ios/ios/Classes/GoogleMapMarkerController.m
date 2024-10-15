@@ -551,7 +551,7 @@
   CLLocationCoordinate2D position = [FLTMarkersController getPosition:markerToAdd];
   NSString *markerIdentifier = markerToAdd[@"markerId"];
   NSString *clusterManagerIdentifier = markerToAdd[@"clusterManagerId"];
-  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvanced)
+  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvancedMarker)
                           ? [GMSAdvancedMarker markerWithPosition:position]
                           : [GMSMarker markerWithPosition:position];
   FLTGoogleMapMarkerController *controller =

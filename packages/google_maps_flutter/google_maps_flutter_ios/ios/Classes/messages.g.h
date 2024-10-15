@@ -29,8 +29,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @end
 
 typedef NS_ENUM(NSUInteger, FGMPlatformMarkerType) {
-  FGMPlatformMarkerTypeLegacy = 0,
-  FGMPlatformMarkerTypeAdvanced = 1,
+  FGMPlatformMarkerTypeMarker = 0,
+  FGMPlatformMarkerTypeAdvancedMarker = 1,
 };
 
 /// Wrapper for FGMPlatformMarkerType to allow for nullability.

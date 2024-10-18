@@ -543,6 +543,29 @@ DartOptions _dartOptionsWithCopyrightHeader(
   ));
 }
 
+void _errorOnEventChannelApi(List<Error> errors, String generator, Root root) {
+  if (root.containsEventChannel) {
+    errors.add(Error(message: '$generator does not support Event Channels'));
+  }
+}
+
+void _errorOnSealedClass(List<Error> errors, String generator, Root root) {
+  if (root.classes.any(
+    (Class element) => element.isSealed,
+  )) {
+    errors.add(Error(message: '$generator does not support sealed classes'));
+  }
+}
+
+void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
+  if (root.classes.any(
+    (Class element) => element.isSealed,
+  )) {
+    errors.add(
+        Error(message: '$generator does not support inheritance in classes'));
+  }
+}
+
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
@@ -569,6 +592,9 @@ class AstGeneratorAdapter implements GeneratorAdapter {
 class DartGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartGeneratorAdapter].
   DartGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'dart';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -650,6 +676,9 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   ObjcGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
+  /// A string representing the name of the language being generated.
+  String languageString = 'objc';
+
   @override
   List<FileType> fileTypeList;
 
@@ -691,13 +720,22 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates Java source code.
 class JavaGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [JavaGeneratorAdapter].
   JavaGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'java';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -728,13 +766,22 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.javaOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates Swift source code.
 class SwiftGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [SwiftGeneratorAdapter].
   SwiftGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'swift';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -775,6 +822,9 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   CppGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
+  /// A string representing the name of the language being generated.
+  String languageString = 'cpp';
+
   @override
   List<FileType> fileTypeList;
 
@@ -810,7 +860,13 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates GObject source code.
@@ -818,6 +874,9 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [GObjectGeneratorAdapter].
   GObjectGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'gobject';
 
   @override
   List<FileType> fileTypeList;
@@ -867,6 +926,10 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
           message:
               'GObject generator does not yet support more than $totalCustomCodecKeysAllowed custom types.'));
     }
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+
     return errors;
   }
 }

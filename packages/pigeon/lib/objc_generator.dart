@@ -901,23 +901,16 @@ if (self.wrapped == nil) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis
-        .whereType<AstHostApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-    final bool hasFlutterApi = root.apis
-        .whereType<AstFlutterApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-
-    if (hasHostApi) {
+    if (root.containsHostApi) {
       _writeWrapError(indent);
       indent.newln();
     }
-    if (hasFlutterApi) {
+    if (root.containsFlutterApi) {
       _writeCreateConnectionError(indent);
       indent.newln();
     }
 
-    if (hasHostApi || hasFlutterApi) {
+    if (root.containsHostApi || root.containsFlutterApi) {
       _writeGetNullableObjectAtIndex(indent);
     }
 

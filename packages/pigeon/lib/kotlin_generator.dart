@@ -1144,19 +1144,11 @@ if (wrapped == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis
-        .whereType<AstHostApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-    final bool hasFlutterApi = root.apis
-        .whereType<AstFlutterApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
-
-    if (hasHostApi || hasProxyApi) {
+    if (root.containsHostApi || root.containsProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
-    if (hasFlutterApi || hasProxyApi) {
+    if (root.containsFlutterApi || root.containsProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
     if (generatorOptions.includeErrorClass) {

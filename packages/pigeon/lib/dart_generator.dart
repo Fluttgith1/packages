@@ -121,11 +121,10 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     );
     indent.newln();
 
-    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${hasProxyApi ? ', immutable, protected' : ''};");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected' : ''};");
     indent.writeln("import 'package:flutter/services.dart';");
-    if (hasProxyApi) {
+    if (root.containsProxyApi) {
       indent.writeln(
         "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
       );
@@ -988,22 +987,12 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostMethod = root.apis
-            .whereType<AstHostApi>()
-            .any((AstHostApi api) => api.methods.isNotEmpty) ||
-        root.apis.whereType<AstProxyApi>().any((AstProxyApi api) =>
-            api.constructors.isNotEmpty ||
-            api.attachedFields.isNotEmpty ||
-            api.hostMethods.isNotEmpty);
-    final bool hasFlutterMethod = root.apis
-            .whereType<AstFlutterApi>()
-            .any((AstFlutterApi api) => api.methods.isNotEmpty) ||
-        root.apis.any((Api api) => api is AstProxyApi);
-
-    if (hasHostMethod) {
+    if (root.containsHostApi || root.containsProxyApi) {
       _writeCreateConnectionError(indent);
     }
-    if (hasFlutterMethod || generatorOptions.testOutPath != null) {
+    if (root.containsFlutterApi ||
+        root.containsProxyApi ||
+        generatorOptions.testOutPath != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
   }

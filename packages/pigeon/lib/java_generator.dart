@@ -1117,20 +1117,13 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis
-        .whereType<AstHostApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-    final bool hasFlutterApi = root.apis
-        .whereType<AstFlutterApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-
     indent.newln();
     _writeErrorClass(indent);
-    if (hasHostApi) {
+    if (root.containsHostApi) {
       indent.newln();
       _writeWrapError(indent);
     }
-    if (hasFlutterApi) {
+    if (root.containsFlutterApi) {
       indent.newln();
       _writeCreateConnectionError(indent);
     }
